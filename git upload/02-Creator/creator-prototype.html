@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Farango — Creator (Coach/Caddy/Pro-Expert) Clickable Prototype</title>
+<style>
+
+  :root{
+    --ink:#182b1c;
+    --panel-dark:#132018;
+    --panel-dark-2:#0d150f;
+    --border:#ddd6c4;
+    --border-soft:#eee9db;
+    --muted:#7c7565;
+    --bg:#f7f4ea;
+    --white:#ffffff;
+    --gold:#b8894f;
+    --gold-light:#d9b073;
+    --accent:#1f3d27;
+    --error:#b3261e;
+    --error-bg:#fdecea;
+    --success:#1e7a34;
+    --success-bg:#eaf6ec;
+    --pending-bg:#fbf0d9;
+    --pending:#8a5b00;
+    --radius:10px;
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:'Segoe UI',Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.45;
+  }
+  ::selection{ background:var(--gold-light); color:#132018; }
+  /* ---------- Top matter ---------- */
+  header.doc{
+    background:var(--panel-dark); color:#fff; padding:36px 5vw 28px;
+  }
+  header.doc .eyebrow{ text-transform:uppercase; letter-spacing:.12em; font-size:12px; color:#b9b9b6; margin-bottom:8px;}
+  header.doc h1{ margin:0 0 6px; font-size:28px;}
+  header.doc p.sub{ margin:0; color:#cfcfcc; font-size:14.5px; max-width:820px;}
+  header.doc .meta{ margin-top:18px; display:flex; gap:28px; flex-wrap:wrap; font-size:12.5px; color:#b9b9b6;}
+  header.doc .meta b{ color:#fff; font-weight:600;}
+
+  nav.flowmap{ background:#fff; border-bottom:1px solid var(--border); padding:18px 5vw; position:sticky; top:0; z-index:50; box-shadow:0 1px 0 rgba(0,0,0,.03);}
+  nav.flowmap .group{ display:inline-block; margin-right:26px; margin-bottom:8px; vertical-align:top;}
+  nav.flowmap .group h4{ margin:0 0 6px; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted);}
+  nav.flowmap a{ display:inline-block; font-size:12.5px; color:var(--ink); text-decoration:none; background:var(--border-soft); border:1px solid var(--border); padding:5px 10px; border-radius:20px; margin:0 6px 6px 0;}
+  nav.flowmap a:hover{ background:#e7e7e4;}
+
+  main{ padding:0 5vw 80px;}
+
+  section.role-section{ padding-top:52px;}
+  section.role-section > .role-head{ display:flex; align-items:baseline; gap:14px; border-bottom:2px solid var(--ink); padding-bottom:10px; margin-bottom:6px;}
+  section.role-section > .role-head h2{ margin:0; font-size:22px;}
+  section.role-section > .role-head .role-tag{ font-size:12px; color:var(--muted); }
+  section.role-section > .role-note{ font-size:13.5px; color:var(--muted); max-width:900px; margin:10px 0 30px;}
+
+  .screen-block{ margin-bottom:56px; scroll-margin-top:90px; }
+  .screen-block .label{ display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+  .screen-block .num{ width:26px; height:26px; border-radius:50%; background:var(--ink); color:#fff; font-size:12px; display:flex; align-items:center; justify-content:center; flex:none;}
+  .screen-block .label h3{ margin:0; font-size:16.5px;}
+  .screen-block .label .flowstep{ font-size:11.5px; color:var(--muted); background:var(--border-soft); border:1px solid var(--border); padding:2px 8px; border-radius:20px;}
+
+  .layout{ display:flex; gap:26px; align-items:flex-start; flex-wrap:wrap;}
+  .frame-wrap{ flex:none; }
+  .annotation{ flex:1 1 280px; min-width:260px; max-width:380px; background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px;}
+  .annotation h4{ margin:0 0 8px; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted);}
+  .annotation ul{ margin:0 0 14px; padding-left:18px; font-size:13px;}
+  .annotation ul:last-child{ margin-bottom:0;}
+  .annotation li{ margin-bottom:5px;}
+  .annotation .src{ font-size:11px; color:#a9a9a6; margin-top:10px; border-top:1px dashed var(--border); padding-top:8px;}
+
+  /* ---------- Auth split frame (Sign up / Login / Forgot password) ---------- */
+  .auth-frame{ width:760px; max-width:86vw; background:#fff; border:1px solid var(--border); border-radius:14px; overflow:hidden; display:flex; box-shadow:0 10px 34px rgba(19,32,24,.14);}
+  .auth-frame .form-side{ width:60%; padding:30px 34px; }
+  .auth-frame .visual-side{ width:40%; background:var(--panel-dark); position:relative; display:flex; align-items:center; justify-content:center; min-height:420px;}
+  .auth-frame .visual-side svg{ width:52%; opacity:.55;}
+  .auth-frame h2.title{ margin:0 0 4px; font-size:22px; font-weight:800;}
+  .auth-frame p.tag{ margin:0 0 22px; font-size:13px; color:var(--muted);}
+  .field{ margin-bottom:15px; }
+  .field label{ display:block; font-size:12.5px; margin-bottom:5px; color:var(--ink);}
+  .field label .req{ color:var(--error); }
+  .field .hint{ font-size:11px; color:var(--muted); margin-top:4px;}
+  .input, .textarea, .select{
+    width:100%; border:1px solid var(--border); border-radius:6px; padding:10px 12px; font-size:13.5px; color:#8a8a87; background:#fff;
+  }
+  .input.with-icon{ display:flex; align-items:center; justify-content:space-between; }
+  .input.with-icon span.icon{ font-size:14px; color:#9a9a97;}
+  .row-2{ display:flex; gap:12px;}
+  .row-2 .field{ flex:1;}
+  .chk-row{ display:flex; align-items:flex-start; gap:8px; font-size:12.5px; margin-bottom:10px;}
+  .chk-row input{ margin-top:2px;}
+  .chk-row a{ color:var(--ink); font-weight:600; text-decoration:underline;}
+  .btn{ width:100%; background:linear-gradient(135deg, #1f3d27, #132018); color:#fff; border:1px solid #0d150f; padding:12px; border-radius:8px; font-size:14px; font-weight:600; text-align:center; cursor:pointer; box-shadow:0 2px 6px rgba(19,32,24,.25); letter-spacing:.01em;}
+  .btn.ghost{ background:#fff; color:var(--ink); border:1px solid var(--border); box-shadow:none;}
+  .link-row{ text-align:center; font-size:12.5px; margin-top:16px; color:var(--muted);}
+  .link-row a{ color:var(--ink); font-weight:700; text-decoration:underline;}
+  .between{ display:flex; justify-content:space-between; align-items:center; font-size:12px; margin:-4px 0 16px;}
+  .between a{ color:var(--ink); }
+  .error-banner{ background:var(--error-bg); border:1px solid #f3c6c2; color:var(--error); font-size:12px; padding:10px 12px; border-radius:6px; margin-bottom:16px;}
+  .error-text{ color:var(--error); font-size:11px; margin-top:4px;}
+
+  /* mountain illustration re-used from reference wireframe style */
+  .visual-side svg .m1{ fill:#8f8f8c;} .visual-side svg .m2{ fill:#6f6f6c;} .visual-side svg .dot{ fill:#bcbcb9;}
+
+  /* ---------- centered card frame (modals / status / confirmation) ---------- */
+  .card-frame{ width:420px; max-width:86vw; background:#fff; border:1px solid var(--border); border-radius:14px; padding:34px 30px; text-align:center; box-shadow:0 10px 34px rgba(19,32,24,.14);}
+  .card-frame .icon-circle{ width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg, var(--gold-light), var(--gold)); color:#fff; border:none; display:flex; align-items:center; justify-content:center; margin:0 auto 18px; font-size:22px; box-shadow:0 4px 12px rgba(184,137,79,.35);}
+  .card-frame h3{ margin:0 0 8px; font-size:19px; font-weight:800;}
+  .card-frame p{ font-size:13px; color:var(--muted); margin:0 0 22px;}
+  .otp-row{ display:flex; gap:10px; justify-content:center; margin-bottom:20px;}
+  .otp-box{ width:46px; height:52px; border:1px solid var(--border); border-radius:6px; text-align:center; line-height:52px; color:#8a8a87; font-size:16px;}
+  .status-pill{ display:inline-block; font-size:11.5px; font-weight:700; padding:4px 12px; border-radius:20px; margin-bottom:14px;}
+  .status-pill.pending{ background:var(--pending-bg); color:var(--pending);}
+  .status-pill.approved{ background:var(--success-bg); color:var(--success);}
+  .status-pill.rejected{ background:var(--error-bg); color:var(--error);}
+
+  /* ---------- full page style frame (Profile setup, application form, dashboard-ish) ---------- */
+  .page-frame{ width:760px; max-width:86vw; background:#fff; border:1px solid var(--border); border-radius:14px; padding:32px 36px; box-shadow:0 10px 34px rgba(19,32,24,.14);}
+  .page-frame h2.title{ margin:0 0 4px; font-size:20px; font-weight:800;}
+  .page-frame p.tag{ margin:0 0 24px; font-size:13px; color:var(--muted);}
+  .avatar-upload{ display:flex; align-items:center; gap:16px; margin-bottom:22px;}
+  .avatar-circle{ width:74px; height:74px; border-radius:50%; background:var(--border-soft); border:1px dashed var(--border); display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:11px; text-align:center;}
+  .chip-group{ display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{ font-size:12px; border:1px solid var(--border); padding:6px 12px; border-radius:20px; color:var(--ink); background:#fff;}
+  .chip.on{ background:var(--gold); color:#fff; border-color:var(--gold);}
+  .toggle-row{ display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border-soft); font-size:13px;}
+  .toggle-row:last-of-type{ border-bottom:none;}
+  .toggle{ width:38px; height:20px; border-radius:20px; background:var(--ink); position:relative; flex:none;}
+  .toggle::after{ content:''; width:16px; height:16px; background:#fff; border-radius:50%; position:absolute; right:2px; top:2px;}
+  .toggle.off{ background:var(--border);}
+  .toggle.off::after{ left:2px; right:auto;}
+  .role-cards{ display:flex; gap:14px; margin-bottom:6px;}
+  .role-card{ flex:1; border:1px solid var(--border); border-radius:8px; padding:16px; text-align:left;}
+  .role-card.selected{ border:2px solid var(--gold); box-shadow:0 0 0 3px rgba(184,137,79,.15);}
+  .role-card h5{ margin:0 0 6px; font-size:13.5px;}
+  .role-card p{ margin:0 0 12px; font-size:11.5px; color:var(--muted);}
+  .role-card .btn{ padding:8px; font-size:12px;}
+  .strength-row{ display:flex; align-items:center; gap:10px; font-size:12px; margin-bottom:18px;}
+  .strength-bars{ display:flex; gap:4px; flex:1;}
+  .strength-bars span{ height:4px; flex:1; background:var(--ink); border-radius:2px;}
+  .strength-bars span.off{ background:var(--border);}
+  .file-drop{ border:1px dashed var(--border); border-radius:6px; padding:16px; font-size:12px; color:var(--muted); text-align:center;}
+  .field-diff-table{ width:100%; border-collapse:collapse; font-size:12px; margin-top:8px;}
+  .field-diff-table th, .field-diff-table td{ border:1px solid var(--border); padding:7px 9px; text-align:left; vertical-align:top;}
+  .field-diff-table th{ background:var(--panel-dark); color:#fff; font-size:11px; text-transform:uppercase; letter-spacing:.03em;}
+
+  footer.doc{ padding:40px 5vw 60px; color:var(--muted); font-size:12px; border-top:1px solid var(--border); margin-top:40px;}
+
+  /* ---------- App shell (dashboard / feed / marketplace screens) ---------- */
+  .app-frame{ width:900px; max-width:90vw; background:#fff; border:1px solid var(--border); border-radius:14px; overflow:hidden; box-shadow:0 10px 34px rgba(19,32,24,.14);}
+  .app-topbar{ display:flex; align-items:center; justify-content:space-between; padding:10px 20px; border-bottom:1px solid var(--border); background:linear-gradient(90deg, var(--panel-dark), #1a2e20);}
+  .app-topbar .logo{ font-weight:800; font-size:14px; display:flex; align-items:center; gap:8px; color:#fff;}
+  .app-topbar .logo img{ height:30px; width:auto; display:block;}
+  .app-topbar .search{ flex:1; max-width:280px; margin:0 20px; border:1px solid rgba(255,255,255,.16); border-radius:20px; padding:7px 14px; font-size:12px; color:#c9c3b6; background:rgba(255,255,255,.06);}
+  .app-topbar .icons{ display:flex; gap:16px; align-items:center; font-size:14px; color:#e6e1d3; cursor:pointer;}
+  .app-topbar .wallet-pill{ background:rgba(184,137,79,.2); border:1px solid rgba(184,137,79,.55); color:#f0d9b8; border-radius:20px; padding:4px 12px; font-size:11.5px; font-weight:700; cursor:pointer;}
+  .app-topbar .avatar{ width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.35); cursor:pointer;}
+  .app-body{ display:flex; min-height:460px;}
+  .app-sidebar{ width:170px; border-right:1px solid var(--border); padding:16px 0; flex:none;}
+  .app-sidebar a{ display:block; padding:9px 20px; font-size:12.5px; color:var(--ink); text-decoration:none; border-left:3px solid transparent;}
+  .app-sidebar a.active{ border-left-color:var(--gold); font-weight:700; background:var(--border-soft); color:var(--ink);}
+  .app-content{ flex:1; padding:22px 24px; overflow:hidden;}
+  .app-content h3.pt{ margin:0 0 4px; font-size:16px;}
+  .app-content p.ps{ margin:0 0 18px; font-size:12px; color:var(--muted);}
+  .stat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:18px;}
+  .stat-card{ border:1px solid var(--border); border-radius:10px; padding:12px; text-align:center; background:linear-gradient(180deg,#fff,#faf8f1);}
+  .stat-card .num{ color:var(--accent);}
+  .stat-card .num{ font-size:18px; font-weight:800;}
+  .stat-card .lab{ font-size:10.5px; color:var(--muted); margin-top:2px;}
+  .action-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:18px;}
+  .action-btn{ border:1px solid var(--border); border-radius:8px; padding:9px; font-size:11px; text-align:center; background:#fff; transition:border-color .15s ease;}
+  .action-btn:hover{ border-color:var(--gold);}
+  .list-row{ display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border-soft); font-size:12.5px;}
+  .list-row .thumb{ width:38px; height:38px; border-radius:6px; background:var(--border-soft); flex:none;}
+  .list-row .thumb.round{ border-radius:50%;}
+  .list-row .meta{ flex:1;}
+  .list-row .meta .t1{ font-weight:700;}
+  .list-row .meta .t2{ color:var(--muted); font-size:11px;}
+  .list-row .cta{ font-size:11px; border:1px solid var(--border); border-radius:20px; padding:5px 12px;}
+
+  .card-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+  .item-card{ border:1px solid var(--border); border-radius:8px; overflow:hidden;}
+  .item-card .thumb{ height:80px; background:var(--border-soft);}
+  .item-card .body{ padding:10px 12px;}
+  .item-card .t1{ font-size:12.5px; font-weight:700;}
+  .item-card .t2{ font-size:11px; color:var(--muted); margin:3px 0 8px;}
+  .item-card .price{ font-size:13px; font-weight:800;}
+  .item-card .btn{ padding:7px; font-size:11px; margin-top:8px;}
+
+  .tabs{ display:flex; gap:6px; border-bottom:1px solid var(--border); margin-bottom:16px;}
+  .tabs span{ font-size:12px; padding:8px 4px; color:var(--muted); border-bottom:2px solid transparent;}
+  .tabs span.active{ color:var(--ink); font-weight:700; border-bottom-color:var(--gold);}
+
+  .table{ width:100%; border-collapse:collapse; font-size:12px;}
+  .table th{ text-align:left; font-size:10.5px; text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--border); padding:6px 8px;}
+  .table td{ padding:9px 8px; border-bottom:1px solid var(--border-soft);}
+  .badge{ font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:20px;}
+  .badge.green{ background:var(--success-bg); color:var(--success);}
+  .badge.amber{ background:var(--pending-bg); color:var(--pending);}
+  .badge.red{ background:var(--error-bg); color:var(--error);}
+  .badge.grey{ background:var(--border-soft); color:var(--muted);}
+
+  .chat-shell{ display:flex; height:420px;}
+  .chat-list{ width:230px; border-right:1px solid var(--border); overflow:hidden;}
+  .chat-list .conv{ padding:10px 14px; border-bottom:1px solid var(--border-soft); font-size:12px;}
+  .chat-list .conv.active{ background:var(--border-soft);}
+  .chat-window{ flex:1; display:flex; flex-direction:column;}
+  .chat-window .chead{ padding:12px 16px; border-bottom:1px solid var(--border); font-size:12.5px; font-weight:700;}
+  .chat-window .cbody{ flex:1; padding:16px; font-size:12px;}
+  .bubble{ max-width:60%; padding:9px 12px; border-radius:12px; margin-bottom:10px; font-size:12px;}
+  .bubble.in{ background:var(--border-soft);}
+  .bubble.out{ background:var(--ink); color:#fff; margin-left:auto;}
+  .chat-window .cfoot{ padding:12px 16px; border-top:1px solid var(--border); display:flex; gap:8px;}
+  .chat-window .cfoot .input{ flex:1;}
+
+  .live-frame{ position:relative; background:#0e0e0d; border-radius:8px; height:280px; display:flex; align-items:center; justify-content:center; color:#8f8f8c; font-size:12px; margin-bottom:14px;}
+  .live-frame .badge-live{ position:absolute; top:12px; left:12px; background:var(--error); color:#fff; font-size:10px; font-weight:800; padding:3px 8px; border-radius:4px;}
+  .live-frame .badge-viewers{ position:absolute; top:12px; right:12px; background:rgba(255,255,255,.12); color:#fff; font-size:10px; padding:3px 8px; border-radius:4px;}
+
+
+/* ---------------- Prototype chrome ---------------- */
+html,body{ height:100%; }
+body{ margin:0; background:#efe9d8; overflow:hidden; }
+
+.proto-bar{
+  position:fixed; top:0; left:0; right:0; height:56px;
+  background:linear-gradient(90deg, #0d150f, #16241a 55%, #1f3d27);
+  color:#fff; display:flex; align-items:center; gap:14px; padding:0 18px; z-index:200; font-size:13px;
+  box-shadow:0 2px 10px rgba(0,0,0,.25); border-bottom:1px solid rgba(184,137,79,.35);
+}
+.proto-bar .brand{ font-weight:800; font-size:13.5px; white-space:nowrap; display:flex; align-items:center; gap:9px; letter-spacing:.01em; }
+.proto-bar .brand img{ height:34px; width:auto; display:block; }
+.proto-bar .brand .role-tag{ background:rgba(184,137,79,.22); border:1px solid rgba(184,137,79,.55); color:#f0d9b8; font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:20px; text-transform:uppercase; letter-spacing:.05em; }
+.proto-bar button.chrome-btn{
+  background:rgba(255,255,255,.06); color:#fff; border:1px solid rgba(255,255,255,.16); border-radius:7px; padding:7px 13px;
+  font-size:12px; cursor:pointer; white-space:nowrap; transition:background .15s ease, border-color .15s ease;
+}
+.proto-bar button.chrome-btn:hover{ background:rgba(184,137,79,.22); border-color:rgba(184,137,79,.6); }
+.proto-bar button.chrome-btn:disabled{ opacity:.3; cursor:not-allowed; }
+.proto-bar .crumb{ flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#c9c3b6; font-size:12.5px; }
+.proto-bar .crumb b{ color:#f0d9b8; }
+.proto-bar .counter{ font-size:11px; color:#9c9686; white-space:nowrap; }
+
+/* Screens */
+.screen{ display:none; position:fixed; top:56px; left:0; right:0; bottom:0; overflow:auto; }
+.screen.active{ display:block; }
+.screen-inner{ min-height:100%; display:flex; flex-direction:column; align-items:center; padding:40px 20px 60px; }
+.frame-stage{ display:flex; justify-content:center; }
+.frame-stage [data-goto]{ cursor:pointer; }
+.frame-stage .btn[data-goto]:hover, .frame-stage .btn.ghost[data-goto]:hover{ opacity:.85; }
+.frame-stage a[data-goto]{ cursor:pointer; }
+
+/* Spec drawer under each screen */
+details.spec{
+  width:100%; max-width:900px; margin-top:18px; background:#fff; border:1px solid var(--border);
+  border-radius:8px; padding:0;
+}
+details.spec summary{
+  cursor:pointer; padding:10px 16px; font-size:12px; font-weight:700; color:var(--muted); list-style:none;
+}
+details.spec summary::-webkit-details-marker{ display:none; }
+details.spec summary::before{ content:'▸ '; }
+details.spec[open] summary::before{ content:'▾ '; }
+details.spec .spec-body{ padding:0 18px 16px; border-top:1px solid var(--border-soft); margin-top:2px; }
+details.spec .annotation{ border:none; padding:14px 0 0; max-width:none; }
+
+/* Screens menu overlay */
+.menu-overlay{
+  position:fixed; inset:56px 0 0 0; background:rgba(0,0,0,.4); z-index:300; display:none;
+}
+.menu-overlay.open{ display:block; }
+.menu-panel{
+  position:absolute; top:0; left:0; bottom:0; width:300px; background:#fff; overflow:auto; padding:18px;
+  box-shadow:2px 0 20px rgba(0,0,0,.15);
+}
+.menu-panel h4{ margin:0 0 14px; font-size:14px; }
+.menu-group{ margin-bottom:18px; }
+.menu-group h5{ margin:0 0 6px; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+.menu-group ul{ list-style:none; margin:0; padding:0; }
+.menu-group li{ display:flex; align-items:center; gap:8px; padding:7px 8px; font-size:12.5px; border-radius:6px; cursor:pointer; }
+.menu-group li:hover{ background:var(--border-soft); }
+.menu-group li.current{ background:linear-gradient(135deg, #1f3d27, #132018); color:#fff; }
+.mi-num{ font-size:10px; color:var(--muted); width:18px; flex:none; }
+.menu-group li.current .mi-num{ color:#cfcfcc; }
+
+/* Toast */
+.proto-toast{
+  position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:#1c1c1b; color:#fff;
+  padding:10px 18px; border-radius:24px; font-size:12.5px; z-index:400; opacity:0; pointer-events:none;
+  transition:opacity .2s ease, transform .2s ease;
+}
+.proto-toast.show{ opacity:1; transform:translateX(-50%) translateY(-4px); }
+
+/* Instagram-style scrolling feed */
+.ig-post{ border:1px solid var(--border); border-radius:8px; margin-bottom:18px; overflow:hidden; }
+.ig-head{ display:flex; align-items:center; gap:10px; padding:10px 12px; }
+.ig-head .thumb.round{ cursor:pointer; }
+.ig-name{ font-size:12.5px; font-weight:700; cursor:pointer; }
+.ig-more{ margin-left:auto; color:var(--muted); font-weight:800; }
+.ig-media{ height:220px; background:var(--border-soft); display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:12.5px; cursor:pointer; }
+.ig-media.locked{ background:#efece2; color:var(--pending); font-weight:700; }
+.ig-actions{ display:flex; align-items:center; padding:10px 12px 2px; font-size:14px; }
+.ig-actions span[data-goto]{ cursor:pointer; }
+.ig-caption{ padding:4px 12px; font-size:12.5px; }
+.ig-caption b{ cursor:pointer; }
+.ig-viewcomments{ padding:2px 12px 6px; font-size:12px; color:var(--muted); cursor:pointer; }
+.ig-time{ padding:0 12px 12px; font-size:10.5px; color:#a9a9a6; text-transform:uppercase; letter-spacing:.04em; }
+
+@media (max-width: 720px){
+  .proto-bar .crumb{ display:none; }
+  .menu-panel{ width:80vw; }
+}
+
+
+</style>
+</head>
+<body>
+
+<div class="proto-bar">
+  <div class="brand"><img src="../assets/farango-logo.svg" alt="Farango"><span>Farango</span><span class="role-tag">Creator</span></div>
+  <button class="chrome-btn" id="menuBtn">☰ Screens</button>
+  <button class="chrome-btn" id="backBtn" disabled>‹ Back</button>
+  <button class="chrome-btn" id="homeBtn">⌂ Home</button>
+  <div class="crumb" id="crumb"></div>
+  <div class="counter" id="counter"></div>
+</div>
+
+<div class="menu-overlay" id="menuOverlay">
+  <div class="menu-panel">
+    <h4>Creator (Coach/Caddy/Pro-Expert) — All Screens</h4>
+    <div class="menu-group"><h5>Application & Auth</h5><ul><li data-goto="c1"><span class="mi-num">1</span><span class="mi-title">Become a Creator</span></li><li data-goto="c2"><span class="mi-num">2</span><span class="mi-title">Creator Application — Coach</span></li><li data-goto="c3"><span class="mi-num">3</span><span class="mi-title">Application Submitted</span></li><li data-goto="c4"><span class="mi-num">4</span><span class="mi-title">Application Status Tracker</span></li><li data-goto="c5"><span class="mi-num">5</span><span class="mi-title">Creator Login</span></li><li data-goto="c6"><span class="mi-num">6</span><span class="mi-title">Forgot Password</span></li><li data-goto="c7"><span class="mi-num">7</span><span class="mi-title">Reset Link Sent</span></li><li data-goto="c8"><span class="mi-num">8</span><span class="mi-title">Create New Password</span></li><li data-goto="c9"><span class="mi-num">9</span><span class="mi-title">Password Reset Success</span></li></ul></div>
+<div class="menu-group"><h5>Dashboard & Content</h5><ul><li data-goto="c10"><span class="mi-num">10</span><span class="mi-title">Creator Dashboard</span></li><li data-goto="c11"><span class="mi-num">11</span><span class="mi-title">Manage Post — My Content</span></li><li data-goto="c12"><span class="mi-num">12</span><span class="mi-title">Create / Edit Post</span></li></ul></div>
+<div class="menu-group"><h5>Subscribers & Plan</h5><ul><li data-goto="c13"><span class="mi-num">13</span><span class="mi-title">Subscriber Management</span></li><li data-goto="c14"><span class="mi-num">14</span><span class="mi-title">Subscriber Detail & Audience Engagement</span></li><li data-goto="c15"><span class="mi-num">15</span><span class="mi-title">Subscription Plan Management</span></li><li data-goto="c16"><span class="mi-num">16</span><span class="mi-title">Edit Subscription Plan</span></li></ul></div>
+<div class="menu-group"><h5>Earnings</h5><ul><li data-goto="c17"><span class="mi-num">17</span><span class="mi-title">Earning & Revenue Dashboard</span></li><li data-goto="c18"><span class="mi-num">18</span><span class="mi-title">Settlement / Payout History</span></li></ul></div>
+<div class="menu-group"><h5>Livestream Management</h5><ul><li data-goto="c19"><span class="mi-num">19</span><span class="mi-title">Live Stream Management — Go Live</span></li><li data-goto="c20"><span class="mi-num">20</span><span class="mi-title">Live Stream — On Air</span></li><li data-goto="c21"><span class="mi-num">21</span><span class="mi-title">Livestream Summary</span></li></ul></div>
+<div class="menu-group"><h5>Marketplace / Products</h5><ul><li data-goto="c22"><span class="mi-num">22</span><span class="mi-title">Product Management — Listing</span></li><li data-goto="c23"><span class="mi-num">23</span><span class="mi-title">Add / Edit Product</span></li><li data-goto="c24"><span class="mi-num">24</span><span class="mi-title">Order & Fulfillment Management</span></li></ul></div>
+<div class="menu-group"><h5>Profile & Settings</h5><ul><li data-goto="c25"><span class="mi-num">25</span><span class="mi-title">Profile & Settings — Overview / Edit</span></li><li data-goto="c26"><span class="mi-num">26</span><span class="mi-title">Payout & Security Settings</span></li></ul></div>
+    <div style="margin-top:6px; text-align:right;"><button class="chrome-btn" id="menuClose" style="background:var(--ink); color:#fff; border-color:var(--ink);">Close</button></div>
+  </div>
+</div>
+
+
+<section class="screen active" id="scr-c1" data-title="Become a Creator" data-section="Application & Auth">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="page-frame">
+  <h2 class="title">Become a Creator</h2>
+  <p class="tag">Build an audience, go live and monetise your golf expertise on Farango. Choose the role that fits you best.</p>
+  <div class="role-cards">
+    <div class="role-card"><h5>Coach</h5><p>Certified instructional professional teaching technique and skills.</p><button class="btn" data-goto="c2">Apply as Coach</button></div>
+    <div class="role-card"><h5>Caddy</h5><p>Strategy and course-management expert.</p><button class="btn" data-goto="c2">Apply as Caddy</button></div>
+    <div class="role-card selected"><h5>Pro / Expert</h5><p>Experienced golfer or influencer building a community.</p><button class="btn" data-goto="c2">Apply as Pro/Expert</button></div>
+  </div>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>Selected role dynamically controls the fields on the application form.</li><li>Reachable from the Player Dashboard / Profile via a "Become Creator" entry point.</li></ul><div class="src">Source: Feature 1 — Become Creator, Creator Role Selection.</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c2" data-title="Creator Application — Coach" data-section="Application & Auth">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="page-frame">
+  <h2 class="title">Apply as a Coach</h2>
+  <p class="tag">Tell us about your coaching background. Your application will be reviewed by our team.</p>
+  <div class="row-2"><div class="field"><label>First Name<span class="req">*</span></label><div class="input">First name</div></div><div class="field"><label>Last Name<span class="req">*</span></label><div class="input">Last name</div></div></div>
+  <div class="field"><label>Email<span class="req">*</span></label><div class="input">Email address</div></div>
+  <div class="field"><label>Password<span class="req">*</span></label><div class="input with-icon">Create password<span class="icon">👁</span></div></div>
+  <div class="row-2"><div class="field"><label>Professional Title<span class="req">*</span></label><div class="input">e.g. PGA Certified Instructor</div></div><div class="field"><label>Years of Experience<span class="req">*</span></label><div class="select">Select range ▾</div></div></div>
+  <div class="field"><label>Certification Upload<span class="req">*</span></label><div class="file-drop">Drag &amp; drop file or click to upload (PDF/JPG)</div></div>
+  <div class="field"><label>Short Bio<span class="req">*</span></label><div class="textarea" style="height:48px;">Tell players about your coaching style…</div></div>
+  <div class="field"><label>Social Links</label><div class="input">Instagram / YouTube / Website (optional)</div></div>
+  <div class="chk-row"><input type="checkbox" checked/><span>I agree to the <a>Creator Terms &amp; Conditions</a></span></div>
+  <button class="btn" data-goto="c3">Submit Application</button>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>On submit, account is marked "Pending Approval" and Admin is notified for review.</li><li>Certification files stored securely on Amazon S3.</li><li>Creator access is fully restricted until admin approval.</li></ul>
+<h4>Field Differences by Role</h4><table class="field-diff-table"><tr><th>Coach</th><th>Caddy</th><th>Pro / Expert</th></tr><tr><td>Professional Title*<br/>Certification Upload*</td><td>Strategy Specialization*<br/>Optional Credential Upload</td><td>Golf Expertise Area*<br/>Optional Social Media Links<br/>Optional Achievement Highlights</td></tr></table>
+<div class="src">Source: Feature 1 — Creator Application (Coach/Caddy/Pro-Expert field tables).</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c3" data-title="Application Submitted" data-section="Application & Auth">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="card-frame">
+  <span class="status-pill pending">PENDING APPROVAL</span>
+  <h3>Application submitted</h3>
+  <p>Thanks for applying as a Creator. Our team is reviewing your details — we'll email you as soon as a decision is made.</p>
+  <button class="btn" data-goto="c4">Check Application Status</button>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>Applicant retains normal Player access while pending.</li><li>Creator Dashboard and monetisation modules stay locked until approved.</li></ul></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c4" data-title="Application Status Tracker" data-section="Application & Auth">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="card-frame" style="text-align:left;">
+  <span class="status-pill approved">APPROVED</span>
+  <h3 style="text-align:left;">You're approved!</h3>
+  <p style="text-align:left;">Congratulations — your Coach application has been approved. You can now access your Creator Dashboard.</p>
+  <button class="btn" data-goto="c10">Go to Creator Dashboard →</button>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>Three states: Pending, Approved, Rejected — status updates dynamically through the review process.</li><li>Rejected applicants see the rejection reason, can edit fields/documents and resubmit — no limit on resubmissions.</li></ul>
+<div class="src">Source: Feature 1 — Creator Application Status.</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c5" data-title="Creator Login" data-section="Application & Auth">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="auth-frame">
+  <div class="form-side">
+    <h2 class="title">Creator Login</h2>
+    <p class="tag">Welcome back! Access your studio.</p>
+    <div class="field"><label>Email<span class="req">*</span></label><div class="input">Enter email</div></div>
+    <div class="field"><label>Password<span class="req">*</span></label><div class="input with-icon">Enter password<span class="icon">👁</span></div></div>
+    <div class="between"><label style="display:flex; gap:6px; align-items:center;"><input type="checkbox" checked/> Remember me</label><a data-goto="c6">Forgot Password?</a></div>
+    <button class="btn" data-goto="c10">Login</button>
+    <div class="link-row">New creator? <a data-goto="c1">Apply here</a></div>
+  </div>
+  <div class="visual-side"><svg viewBox="0 0 200 160"><circle class="dot" cx="150" cy="30" r="10"/><polygon class="m1" points="30,140 90,40 150,140"/><polygon class="m2" points="90,140 140,60 190,140"/></svg></div>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>Credential validation performed securely; approved creators route to Creator Dashboard.</li><li>5 failed attempts → account locked 30 minutes + security email.</li><li>If application is still Pending, dashboard/monetisation modules stay restricted after login.</li></ul><div class="src">Source: Feature 2 — Login &amp; Session Management (Creator).</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c6" data-title="Forgot Password" data-section="Application & Auth">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="auth-frame">
+  <div class="form-side">
+    <h2 class="title">Forgot Password</h2>
+    <p class="tag">Enter your registered email and we'll send a secure reset link.</p>
+    <div class="field"><label>Email<span class="req">*</span></label><div class="input">Enter email</div></div>
+    <button class="btn" data-goto="c7">Send Recovery Link →</button>
+    <div class="link-row">Return to <a data-goto="c5">Login</a></div>
+  </div>
+  <div class="visual-side"><svg viewBox="0 0 200 160"><circle class="dot" cx="150" cy="30" r="10"/><polygon class="m1" points="30,140 90,40 150,140"/><polygon class="m2" points="90,140 140,60 190,140"/></svg></div>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>Secure reset link emailed — not OTP.</li></ul><div class="src">Source: Feature 2 — Forgot Password.</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c7" data-title="Reset Link Sent" data-section="Application & Auth">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="card-frame"><div class="icon-circle">✉</div><h3>Check your email</h3><p>A password reset link has been sent. It's valid for 1 hour and single-use.</p><button class="btn ghost" data-goto="c7">Resend Link</button><div style="margin-top:14px;"><a data-goto="c8" style="font-size:12px; text-decoration:underline;">I clicked the email link →</a></div></div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>Notes</h4><ul><li>Recommended confirmation state, consistent with the Player flow pattern.</li></ul></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c8" data-title="Create New Password" data-section="Application & Auth">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="auth-frame">
+  <div class="form-side">
+    <h2 class="title">Create New Password</h2>
+    <p class="tag">Set a new password for your creator account.</p>
+    <div class="field"><label>New Password<span class="req">*</span></label><div class="input with-icon">Enter new password<span class="icon">👁</span></div></div>
+    <div class="field"><label>Confirm Password<span class="req">*</span></label><div class="input with-icon">Re-enter password<span class="icon">👁</span></div></div>
+    <div class="strength-row">Password: <div class="strength-bars"><span></span><span></span><span></span><span></span><span class="off"></span></div> Good</div>
+    <button class="btn" data-goto="c9">Create Password</button>
+  </div>
+  <div class="visual-side"><svg viewBox="0 0 200 160"><circle class="dot" cx="150" cy="30" r="10"/><polygon class="m1" points="30,140 90,40 150,140"/><polygon class="m2" points="90,140 140,60 190,140"/></svg></div>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>Existing password invalidated after successful update.</li></ul><div class="src">Source: Feature 2 — Password Reset.</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c9" data-title="Password Reset Success" data-section="Application & Auth">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="card-frame"><div class="icon-circle">✓</div><h3>Password updated</h3><p>Your password has been changed successfully.</p><button class="btn" data-goto="c5">Go to Login →</button></div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><div class="src">Source: Feature 2 — Password Reset.</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c10" data-title="Creator Dashboard" data-section="Dashboard & Content">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="app-frame">
+  <div class="app-topbar"><div class="logo"><img src="../assets/farango-logo.svg" alt="Farango" style="height:24px;width:auto;vertical-align:middle;margin-right:7px;">Farango Studio</div><div class="search">🔍 Search…</div>
+    <div class="icons"><span class="wallet-pill" data-goto="c17">💰 $2,140.50</span><span data-goto="c14">🔔</span><span data-goto="c25">✉</span><div class="avatar" data-goto="c25"></div></div></div>
+  <div class="app-body">
+    <div class="app-sidebar"><a class="active" data-goto="c10">Dashboard</a><a data-goto="c11">Content</a><a data-goto="c13">Subscribers</a><a data-goto="c15">Subscription Plan</a><a data-goto="c17">Earnings</a><a data-goto="c19">Livestreams</a><a data-goto="c22">Marketplace</a><a data-goto="c25">Profile &amp; Settings</a><a data-goto="c5">Logout</a></div>
+    <div class="app-content">
+      <h3 class="pt">Welcome back, Coach Mike 🏌</h3>
+      <p class="ps">farango.com/mike_turner_golf · Coach</p>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="num">3,214</div><div class="lab">Followers</div></div>
+        <div class="stat-card"><div class="num">842</div><div class="lab">Active Subscribers</div></div>
+        <div class="stat-card"><div class="num">$2,140.50</div><div class="lab">Monthly Earnings</div></div>
+        <div class="stat-card"><div class="num">$680.00</div><div class="lab">Pending Settlement</div></div>
+      </div>
+      <div class="action-grid">
+        <div class="action-btn" data-goto="c12">Create Post</div><div class="action-btn" data-goto="c19">Start Livestream</div><div class="action-btn" data-goto="c23">Create Product</div><div class="action-btn" data-goto="c17">View Earnings</div>
+        <div class="action-btn" data-goto="c13">View Subscribers</div><div class="action-btn" data-goto="c15">Subscription Plan</div><div class="action-btn" data-goto="c22">Marketplace</div><div class="action-btn" data-goto="c25">Settings</div>
+      </div>
+      <h3 class="pt" style="font-size:13px;">Recent Activity</h3>
+      <div class="list-row"><div class="thumb round"></div><div class="meta"><div class="t1" data-goto="c13">3 new subscribers this week</div><div class="t2">Today</div></div></div>
+      <div class="list-row"><div class="thumb round"></div><div class="meta"><div class="t1" data-goto="c20">Golf Ball tip received during livestream — 50 🏌</div><div class="t2">Yesterday</div></div></div>
+      <div class="list-row"><div class="thumb round"></div><div class="meta"><div class="t1" data-goto="c24">New order — Coach Mike Signature Tees (x50)</div><div class="t2">2 days ago</div></div></div>
+    </div>
+  </div>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>Key Elements</h4><ul><li>Top navbar with USD earnings indicator; sidebar with role-based navigation</li><li>Welcome panel, quick stats, quick actions, recent activity, content/subscriber/earnings/livestream overview widgets</li></ul>
+<h4>System Behaviour</h4><ul><li>All stats aggregated dynamically from content, subscription, earnings and livestream modules.</li></ul><div class="src">Source: Feature 3 — Creator Dashboard.</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c11" data-title="Manage Post — My Content" data-section="Dashboard & Content">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="app-frame">
+  <div class="app-topbar"><div class="logo"><img src="../assets/farango-logo.svg" alt="Farango" style="height:24px;width:auto;vertical-align:middle;margin-right:7px;">Farango Studio</div><div class="search">🔍 Search…</div>
+    <div class="icons"><span class="wallet-pill" data-goto="c17">💰 $2,140.50</span><span data-goto="c14">🔔</span><span data-goto="c25">✉</span><div class="avatar" data-goto="c25"></div></div></div>
+  <div class="app-body">
+    <div class="app-sidebar"><a data-goto="c10">Dashboard</a><a class="active" data-goto="c11">Content</a><a data-goto="c13">Subscribers</a><a data-goto="c15">Subscription Plan</a><a data-goto="c17">Earnings</a><a data-goto="c19">Livestreams</a><a data-goto="c22">Marketplace</a><a data-goto="c25">Profile &amp; Settings</a><a data-goto="c5">Logout</a></div>
+    <div class="app-content">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;"><h3 class="pt" style="margin:0;">My Content</h3><button class="btn" style="width:auto; padding:9px 16px;" data-goto="c12">+ Create Post</button></div>
+      <div class="tabs"><span class="active">All</span><span>Free</span><span>Premium 🔒</span><span>Drafts</span></div>
+      <div class="list-row"><div class="thumb"></div><div class="meta"><div class="t1">3 drills to fix your slice</div><div class="t2">Free · ❤ 214 · 💬 32 · Published Aug 2</div></div><div class="cta" data-goto="c12">Edit</div></div>
+      <div class="list-row"><div class="thumb"></div><div class="meta"><div class="t1">🔒 Tournament round breakdown</div><div class="t2">Premium · ❤ 96 · 💬 18 · Published Jul 30</div></div><div class="cta" data-goto="c12">Edit</div></div>
+      <div class="list-row"><div class="thumb"></div><div class="meta"><div class="t1">Grip pressure explained</div><div class="t2">Free · Draft — not yet published</div></div><div class="cta" data-goto="c12">Edit</div></div>
+    </div>
+  </div>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>Key Elements</h4><ul><li>Free/Premium content grid, post visibility status, public profile preview</li></ul>
+<h4>System Behaviour</h4><ul><li>Displays the creator's own published content, Instagram-style.</li></ul><div class="src">Source: Feature 4 — Content Management System (My Content Feed).</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c12" data-title="Create / Edit Post" data-section="Dashboard & Content">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="page-frame">
+  <h2 class="title">Create Post</h2>
+  <p class="tag">Publish free content to everyone, or toggle Premium to restrict it to active subscribers.</p>
+  <div class="field"><label>Caption</label><div class="textarea" style="height:52px;">What are you sharing today?</div></div>
+  <div class="field"><label>Media</label><div class="file-drop">Upload image or video</div></div>
+  <div class="toggle-row">Premium Content (subscribers only)<div class="toggle off"></div></div>
+  <button class="btn" style="margin-top:14px;" data-goto="c11">Publish</button>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>Free content is visible to all logged-in users; Premium content is accessible only to active subscribers.</li><li>Media securely stored on Amazon S3; edits reflect dynamically platform-wide.</li></ul><div class="src">Source: Feature 4 — Create Free/Premium Content.</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c13" data-title="Subscriber Management" data-section="Subscribers & Plan">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="app-frame">
+  <div class="app-topbar"><div class="logo"><img src="../assets/farango-logo.svg" alt="Farango" style="height:24px;width:auto;vertical-align:middle;margin-right:7px;">Farango Studio</div><div class="search">🔍 Search…</div>
+    <div class="icons"><span class="wallet-pill" data-goto="c17">💰 $2,140.50</span><span data-goto="c14">🔔</span><span data-goto="c25">✉</span><div class="avatar" data-goto="c25"></div></div></div>
+  <div class="app-body">
+    <div class="app-sidebar"><a data-goto="c10">Dashboard</a><a data-goto="c11">Content</a><a class="active" data-goto="c13">Subscribers</a><a data-goto="c15">Subscription Plan</a><a data-goto="c17">Earnings</a><a data-goto="c19">Livestreams</a><a data-goto="c22">Marketplace</a><a data-goto="c25">Profile &amp; Settings</a><a data-goto="c5">Logout</a></div>
+    <div class="app-content">
+      <h3 class="pt">Subscribers</h3>
+      <p class="ps">842 active · $8,410.58 subscription revenue this month</p>
+      <div class="field"><div class="input">🔍 Search subscribers…</div></div>
+      <table class="table">
+        <tr><th>Subscriber</th><th>Since</th><th>Status</th><th></th></tr>
+        <tr><td>Jordan P.</td><td>Jul 2, 2026</td><td><span class="badge green">Active</span></td><td><a data-goto="c14" style="font-size:11px; text-decoration:underline;">View</a></td></tr>
+        <tr><td>Alex Rivera</td><td>Jun 18, 2026</td><td><span class="badge green">Active</span></td><td><a data-goto="c14" style="font-size:11px; text-decoration:underline;">View</a></td></tr>
+        <tr><td>Sam Osei</td><td>Apr 4, 2026</td><td><span class="badge red">Cancelled</span></td><td><a data-goto="c14" style="font-size:11px; text-decoration:underline;">View</a></td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>Key Elements</h4><ul><li>Subscriber list, status, search</li></ul><h4>System Behaviour</h4><ul><li>On cancellation, player access remains active until the current billing cycle expires.</li></ul><div class="src">Source: Feature 5 — Subscription Management (Subscriber Access), Feature 6 — Subscriber Community.</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c14" data-title="Subscriber Detail & Audience Engagement" data-section="Subscribers & Plan">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="page-frame">
+  <h2 class="title">Jordan P.</h2>
+  <p class="tag">Subscribed since Jul 2, 2026 · Renews Sep 2, 2026 · Status: Active</p>
+  <div class="stat-grid" style="margin-top:16px;">
+    <div class="stat-card"><div class="num">3,214</div><div class="lab">Total Followers</div></div>
+    <div class="stat-card"><div class="num">842</div><div class="lab">Active Subscribers</div></div>
+    <div class="stat-card"><div class="num">1.2k</div><div class="lab">Likes (30d)</div></div>
+    <div class="stat-card"><div class="num">+64</div><div class="lab">Follower Growth (30d)</div></div>
+  </div>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>Follower and subscriber relationships load dynamically; engagement metrics (likes, comments, shares, follower growth) update in real time.</li></ul><div class="src">Source: Feature 6 — Followers &amp; Community Management (Audience Engagement).</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c15" data-title="Subscription Plan Management" data-section="Subscribers & Plan">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="app-frame">
+  <div class="app-topbar"><div class="logo"><img src="../assets/farango-logo.svg" alt="Farango" style="height:24px;width:auto;vertical-align:middle;margin-right:7px;">Farango Studio</div><div class="search">🔍 Search…</div>
+    <div class="icons"><span class="wallet-pill" data-goto="c17">💰 $2,140.50</span><span data-goto="c14">🔔</span><span data-goto="c25">✉</span><div class="avatar" data-goto="c25"></div></div></div>
+  <div class="app-body">
+    <div class="app-sidebar"><a data-goto="c10">Dashboard</a><a data-goto="c11">Content</a><a data-goto="c13">Subscribers</a><a class="active" data-goto="c15">Subscription Plan</a><a data-goto="c17">Earnings</a><a data-goto="c19">Livestreams</a><a data-goto="c22">Marketplace</a><a data-goto="c25">Profile &amp; Settings</a><a data-goto="c5">Logout</a></div>
+    <div class="app-content">
+      <h3 class="pt">Subscription Plan</h3>
+      <div class="page-frame" style="width:100%; box-shadow:none; padding:18px;">
+        <p class="tag">Your single monthly subscription tier, visible on your public profile.</p>
+        <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
+          <div class="stat-card"><div class="num">$9.99</div><div class="lab">Monthly Price</div></div>
+          <div class="stat-card"><div class="num">842</div><div class="lab">Active Subscribers</div></div>
+          <div class="stat-card"><div class="num">$8,410.58</div><div class="lab">Revenue (30d)</div></div>
+        </div>
+        <button class="btn" style="width:auto; padding:10px 18px; margin-top:14px;" data-goto="c16">Edit Plan</button>
+      </div>
+    </div>
+  </div>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>Creators independently manage subscription pricing; platform supports one tier per creator.</li></ul><div class="src">Source: Feature 5 — Subscription Management System.</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c16" data-title="Edit Subscription Plan" data-section="Subscribers & Plan">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="page-frame">
+  <h2 class="title">Edit Subscription Plan</h2>
+  <div class="field"><label>Monthly Price (USD)</label><div class="input">9.99</div></div>
+  <div class="field"><label>Subscription Benefits</label><div class="textarea" style="height:60px;">Full access to premium posts, direct messaging, subscriber-only livestreams…</div></div>
+  <button class="btn" data-goto="c15">Save Plan</button>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>Subscription duration fixed at 1 month per platform rules; only price and benefits copy are creator-editable.</li></ul><div class="src">Source: Feature 5 — Subscription Management System.</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c17" data-title="Earning & Revenue Dashboard" data-section="Earnings">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="app-frame">
+  <div class="app-topbar"><div class="logo"><img src="../assets/farango-logo.svg" alt="Farango" style="height:24px;width:auto;vertical-align:middle;margin-right:7px;">Farango Studio</div><div class="search">🔍 Search…</div>
+    <div class="icons"><span class="wallet-pill" data-goto="c17">💰 $2,140.50</span><span data-goto="c14">🔔</span><span data-goto="c25">✉</span><div class="avatar" data-goto="c25"></div></div></div>
+  <div class="app-body">
+    <div class="app-sidebar"><a data-goto="c10">Dashboard</a><a data-goto="c11">Content</a><a data-goto="c13">Subscribers</a><a data-goto="c15">Subscription Plan</a><a class="active" data-goto="c17">Earnings</a><a data-goto="c19">Livestreams</a><a data-goto="c22">Marketplace</a><a data-goto="c25">Profile &amp; Settings</a><a data-goto="c5">Logout</a></div>
+    <div class="app-content">
+      <h3 class="pt">Earnings &amp; Revenue</h3>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="num">$8,410.58</div><div class="lab">Subscriptions (85%)</div></div>
+        <div class="stat-card"><div class="num">$1,204.00</div><div class="lab">Tips (85%)</div></div>
+        <div class="stat-card"><div class="num">$640.00</div><div class="lab">Add-On Services (90%)</div></div>
+        <div class="stat-card"><div class="num">$318.75</div><div class="lab">Marketplace (85%)</div></div>
+      </div>
+      <div style="display:flex; gap:10px; margin-bottom:16px;">
+        <button class="btn ghost" style="width:auto; padding:9px 16px;" data-goto="c18">View Settlement History</button>
+        <button class="btn ghost" style="width:auto; padding:9px 16px;" data-goto="c26">Payout Settings (Stripe Connect)</button>
+      </div>
+      <p style="font-size:12px; color:var(--muted);">Pending settlement: <b>$680.00</b> — next payout cycle Aug 8, 2026.</p>
+    </div>
+  </div>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>Key Elements</h4><ul><li>Revenue breakdown by stream: Subscriptions, Tips, Add-On Services, Marketplace — each shown with the creator's share percentage</li></ul>
+<h4>System Behaviour</h4><ul><li>Golf Ball tips convert to USD earnings at settlement using the admin-set conversion ratio at time of event; creators never hold a Golf Ball balance.</li><li>Payouts run through Stripe Connect Express.</li></ul><div class="src">Source: Feature 9/10 — Creator Tip &amp; Engagement Earnings Overview; Revenue Model (1.2).</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c18" data-title="Settlement / Payout History" data-section="Earnings">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="page-frame">
+  <h2 class="title">Settlement History</h2>
+  <table class="table">
+    <tr><th>Period</th><th>Gross</th><th>Farango Fee</th><th>Net Payout</th><th>Status</th></tr>
+    <tr><td>Jul 1–31, 2026</td><td>$9,842.00</td><td>$1,476.30</td><td>$8,365.70</td><td><span class="badge green">Paid</span></td></tr>
+    <tr><td>Jun 1–30, 2026</td><td>$8,910.00</td><td>$1,336.50</td><td>$7,573.50</td><td><span class="badge green">Paid</span></td></tr>
+    <tr><td>Aug 1–8, 2026 (in progress)</td><td>$680.00</td><td>$102.00</td><td>$578.00</td><td><span class="badge amber">Pending</span></td></tr>
+  </table>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>Settlement cycle and payout calculated via backend event-based settlement, per the finalised creator revenue-sharing model.</li></ul><div class="src">Source: Feature 9 — Creator Earnings Overview; discovery notes on creator settlement cycle.</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c19" data-title="Live Stream Management — Go Live" data-section="Livestream Management">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="app-frame">
+  <div class="app-topbar"><div class="logo"><img src="../assets/farango-logo.svg" alt="Farango" style="height:24px;width:auto;vertical-align:middle;margin-right:7px;">Farango Studio</div><div class="search">🔍 Search…</div>
+    <div class="icons"><span class="wallet-pill" data-goto="c17">💰 $2,140.50</span><span data-goto="c14">🔔</span><span data-goto="c25">✉</span><div class="avatar" data-goto="c25"></div></div></div>
+  <div class="app-body">
+    <div class="app-sidebar"><a data-goto="c10">Dashboard</a><a data-goto="c11">Content</a><a data-goto="c13">Subscribers</a><a data-goto="c15">Subscription Plan</a><a data-goto="c17">Earnings</a><a class="active" data-goto="c19">Livestreams</a><a data-goto="c22">Marketplace</a><a data-goto="c25">Profile &amp; Settings</a><a data-goto="c5">Logout</a></div>
+    <div class="app-content">
+      <h3 class="pt">Start a Livestream</h3>
+      <div class="page-frame" style="width:100%; box-shadow:none; padding:18px;">
+        <div class="field"><label>Stream Title</label><div class="input">Saturday Q&amp;A — bring your swing questions</div></div>
+        <div class="field"><label>Thumbnail Image</label><div class="file-drop">Upload thumbnail</div></div>
+        <div class="toggle-row">Public Stream (all logged-in users)<div class="toggle"></div></div>
+        <div class="toggle-row">Subscriber-Only Stream<div class="toggle off"></div></div>
+        <button class="btn" style="width:auto; padding:10px 20px; margin-top:6px;" data-goto="c20">Go Live</button>
+      </div>
+    </div>
+  </div>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>Livestream launched via Agora integration.</li><li>Subscriber-Only restricts access to players with an active subscription to this creator.</li></ul><div class="src">Source: Feature 7 — Live Stream Management System.</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c20" data-title="Live Stream — On Air" data-section="Livestream Management">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="page-frame" style="width:500px;">
+  <div class="live-frame"><span class="badge-live">● LIVE</span><span class="badge-viewers">👁 118 watching</span>Streaming — Saturday Q&amp;A</div>
+  <div class="list-row"><div class="thumb round"></div><div class="meta"><div class="t1">Jordan P.</div><div class="t2">What grip do you recommend for a hook?</div></div></div>
+  <div class="list-row"><div class="thumb round"></div><div class="meta"><div class="t1">🏌 Golf Ball received</div><div class="t2">Alex Rivera sent 25 Golf Balls — "Great session!"</div></div></div>
+  <div style="display:flex; gap:8px;"><div class="input" style="flex:1;">Reply in chat…</div><button class="btn" style="width:auto; padding:9px 14px; background:var(--error);" data-goto="c21">End Live</button></div>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>Real-time chat over WebSocket (Socket.IO); Golf Ball tip notifications appear live during the stream.</li><li>Ending requires a confirmation popup (shown as immediate transition here for prototype simplicity).</li></ul><div class="src">Source: Feature 7 — Livestream Chat, Receive a Livestream Golf Ball, End Livestream.</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c21" data-title="Livestream Summary" data-section="Livestream Management">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="card-frame" style="text-align:left;">
+  <div class="icon-circle" style="margin:0 auto 18px;">✓</div>
+  <h3 style="text-align:center;">Stream ended</h3>
+  <table class="table"><tr><th>Total Viewers</th><th>Golf Balls Received</th><th>Duration</th></tr><tr><td>284</td><td>420 🏌</td><td>52 min</td></tr></table>
+  <button class="btn" style="margin-top:14px;" data-goto="c10">Back to Dashboard</button>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>Summary generated automatically after stream completion.</li></ul><div class="src">Source: Feature 7 — Livestream Summary.</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c22" data-title="Product Management — Listing" data-section="Marketplace / Products">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="app-frame">
+  <div class="app-topbar"><div class="logo"><img src="../assets/farango-logo.svg" alt="Farango" style="height:24px;width:auto;vertical-align:middle;margin-right:7px;">Farango Studio</div><div class="search">🔍 Search…</div>
+    <div class="icons"><span class="wallet-pill" data-goto="c17">💰 $2,140.50</span><span data-goto="c14">🔔</span><span data-goto="c25">✉</span><div class="avatar" data-goto="c25"></div></div></div>
+  <div class="app-body">
+    <div class="app-sidebar"><a data-goto="c10">Dashboard</a><a data-goto="c11">Content</a><a data-goto="c13">Subscribers</a><a data-goto="c15">Subscription Plan</a><a data-goto="c17">Earnings</a><a data-goto="c19">Livestreams</a><a class="active" data-goto="c22">Marketplace</a><a data-goto="c25">Profile &amp; Settings</a><a data-goto="c5">Logout</a></div>
+    <div class="app-content">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;"><h3 class="pt" style="margin:0;">My Products</h3><button class="btn" style="width:auto; padding:9px 16px;" data-goto="c23">+ Add Product</button></div>
+      <div class="card-grid">
+        <div class="item-card"><div class="thumb"></div><div class="body"><div class="t1">Signature Tees (x50)</div><div class="t2">Standard Listing</div><div class="price">$12.50</div><button class="btn ghost" style="padding:6px;" data-goto="c23">Edit</button></div></div>
+        <div class="item-card"><div class="thumb"></div><div class="body"><div class="t1">1:1 Swing Review (Digital)</div><div class="t2">Digital Product</div><div class="price">$29.00</div><button class="btn ghost" style="padding:6px;" data-goto="c23">Edit</button></div></div>
+        <div class="item-card"><div class="thumb"></div><div class="body"><div class="t1">30-min Coaching Session</div><div class="t2">Add-On Service</div><div class="price">$60.00</div><button class="btn ghost" style="padding:6px;" data-goto="c23">Edit</button></div></div>
+      </div>
+      <div style="margin-top:16px;"><a data-goto="c24" style="font-size:12.5px; font-weight:700; text-decoration:underline;">View Orders for My Products →</a></div>
+    </div>
+  </div>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>Key Elements</h4><ul><li>Covers marketplace products, digital products and add-on/session services managed by the creator.</li></ul><h4>System Behaviour</h4><ul><li>Digital Products 90/10 split; Marketplace Standard 85/15, Luxury 80/20; Add-On Services 90/10.</li></ul><div class="src">Source: Feature 13/14 — Add-On Services &amp; Marketplace Management; Revenue Model (1.2).</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c23" data-title="Add / Edit Product" data-section="Marketplace / Products">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="page-frame">
+  <h2 class="title">Add Product</h2>
+  <div class="field"><label>Product Type</label><div class="select">Marketplace Product ▾</div></div>
+  <div class="field"><label>Product Name</label><div class="input">e.g. Signature Tees (x50)</div></div>
+  <div class="field"><label>Description</label><div class="textarea" style="height:44px;">Describe the product…</div></div>
+  <div class="row-2"><div class="field"><label>Price (USD)</label><div class="input">12.50</div></div><div class="field"><label>Stock Quantity</label><div class="input">200</div></div></div>
+  <div class="field"><label>Product Images</label><div class="file-drop">Upload up to 6 images</div></div>
+  <button class="btn" data-goto="c22">Save Product</button>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>Listed products go live in the Fairway Marketplace once saved; luxury vs standard listing classification affects commission split.</li></ul><div class="src">Source: Feature 14 — Marketplace Management.</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c24" data-title="Order & Fulfillment Management" data-section="Marketplace / Products">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="page-frame">
+  <h2 class="title">Orders</h2>
+  <table class="table">
+    <tr><th>Order</th><th>Product</th><th>Buyer</th><th>Status</th></tr>
+    <tr><td>#FG-20394</td><td>Signature Tees (x50)</td><td>Alex Rivera</td><td><span class="badge amber">Processing</span></td></tr>
+    <tr><td>#FG-20211</td><td>1:1 Swing Review</td><td>Jordan P.</td><td><span class="badge green">Delivered</span></td></tr>
+  </table>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>Order status synced dynamically with logistics/shipping integration for physical products.</li></ul><div class="src">Source: Feature 15 — Order &amp; Fulfillment Management.</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c25" data-title="Profile & Settings — Overview / Edit" data-section="Profile & Settings">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="app-frame">
+  <div class="app-topbar"><div class="logo"><img src="../assets/farango-logo.svg" alt="Farango" style="height:24px;width:auto;vertical-align:middle;margin-right:7px;">Farango Studio</div><div class="search">🔍 Search…</div>
+    <div class="icons"><span class="wallet-pill" data-goto="c17">💰 $2,140.50</span><span data-goto="c14">🔔</span><span data-goto="c25">✉</span><div class="avatar" data-goto="c25"></div></div></div>
+  <div class="app-body">
+    <div class="app-sidebar"><a data-goto="c10">Dashboard</a><a data-goto="c11">Content</a><a data-goto="c13">Subscribers</a><a data-goto="c15">Subscription Plan</a><a data-goto="c17">Earnings</a><a data-goto="c19">Livestreams</a><a data-goto="c22">Marketplace</a><a class="active" data-goto="c25">Profile &amp; Settings</a><a data-goto="c5">Logout</a></div>
+    <div class="app-content">
+      <div class="avatar-upload"><div class="avatar-circle">Photo</div><div><div style="font-weight:700; font-size:14px;">Coach Mike Turner</div><div style="font-size:12px; color:var(--muted);">Coach · farango.com/mike_turner_golf</div></div></div>
+      <div class="field"><label>Professional Title</label><div class="input">PGA Certified Instructor</div></div>
+      <div class="field"><label>Bio</label><div class="textarea" style="height:44px;">Helping players build repeatable, pressure-proof swings.</div></div>
+      <div style="display:flex; gap:10px;"><button class="btn" style="width:auto; padding:9px 16px;" data-goto="c25">Save Changes</button><button class="btn ghost" style="width:auto; padding:9px 16px;" data-goto="c26">Payout &amp; Security Settings →</button></div>
+    </div>
+  </div>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>Profile updates reflect dynamically across the platform and public profile.</li></ul><div class="src">Source: Feature 17 — Creator Profile Management.</div></div>
+    </details>
+  </div>
+</section>
+
+<section class="screen" id="scr-c26" data-title="Payout & Security Settings" data-section="Profile & Settings">
+  <div class="screen-inner">
+    <div class="frame-stage">
+      
+<div class="page-frame">
+  <h2 class="title">Payout &amp; Security</h2>
+  <div class="field"><label>Stripe Connect Account</label><div class="input with-icon">acct_1P•••live<span class="icon" style="color:var(--success);">✓ Verified (KYC complete)</span></div></div>
+  <div class="field"><label>Change Password</label><div class="input with-icon">••••••••<span class="icon">👁</span></div></div>
+  <div class="toggle-row">Email me on new subscriber<div class="toggle"></div></div>
+  <div class="toggle-row">Email me on settlement payout<div class="toggle"></div></div>
+  <button class="btn" data-goto="c25">Save Settings</button>
+</div>
+    </div>
+    <details class="spec">
+      <summary>ⓘ Screen spec &amp; source</summary>
+      <div class="spec-body"><h4>System Behaviour</h4><ul><li>Identity/KYC verification via Stripe Identity required before payout activation, in support of Stripe Connect compliance.</li><li>All active sessions invalidated after a successful password change.</li></ul><div class="src">Source: Plugins &amp; Integrations — Identity Verification (KYC); Feature 17 — Creator Profile Management.</div></div>
+    </details>
+  </div>
+</section>
+
+<div class="proto-toast" id="toast"></div>
+
+
+<script>
+(function(){
+  var screens = Array.prototype.slice.call(document.querySelectorAll('.screen'));
+  var screenIds = screens.map(function(s){ return s.id.replace('scr-',''); });
+  var history_ = [];
+  var current = null;
+
+  function idOf(sid){ return 'scr-' + sid; }
+
+  function show(sid, push){
+    if (screenIds.indexOf(sid) === -1) { toast('Screen "' + sid + '" not found'); return; }
+    if (push !== false && current && current !== sid) history_.push(current);
+    screens.forEach(function(s){ s.classList.remove('active'); });
+    var el = document.getElementById(idOf(sid));
+    el.classList.add('active');
+    el.scrollTop = 0;
+    window.scrollTo(0,0);
+    current = sid;
+    updateChrome();
+    closeMenu();
+  }
+
+  function back(){
+    if (history_.length === 0) return;
+    var prev = history_.pop();
+    show(prev, false);
+  }
+
+  function updateChrome(){
+    var el = document.getElementById(idOf(current));
+    var title = el.getAttribute('data-title');
+    var section = el.getAttribute('data-section');
+    document.getElementById('crumb').innerHTML = section + ' &nbsp;/&nbsp; <b>' + title + '</b>';
+    var idx = screenIds.indexOf(current) + 1;
+    document.getElementById('counter').textContent = 'Screen ' + idx + ' of ' + screenIds.length;
+    document.getElementById('backBtn').disabled = history_.length === 0;
+    document.querySelectorAll('.menu-group li').forEach(function(li){
+      li.classList.toggle('current', li.getAttribute('data-goto') === current);
+    });
+  }
+
+  var toastTimer;
+  function toast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 1600);
+  }
+
+  function openMenu(){ document.getElementById('menuOverlay').classList.add('open'); }
+  function closeMenu(){ document.getElementById('menuOverlay').classList.remove('open'); }
+
+  // Event delegation for any element with data-goto anywhere in the document
+  document.addEventListener('click', function(e){
+    var el = e.target.closest('[data-goto]');
+    if (!el) {
+      if (e.target.id === 'menuOverlay') closeMenu();
+      return;
+    }
+    e.preventDefault();
+    var sid = el.getAttribute('data-goto');
+    show(sid);
+  });
+
+  document.getElementById('backBtn').addEventListener('click', back);
+  document.getElementById('homeBtn').addEventListener('click', function(){ show('c10'); });
+  document.getElementById('menuBtn').addEventListener('click', openMenu);
+  document.getElementById('menuClose').addEventListener('click', closeMenu);
+
+  // ---- Small interactive behaviours ----
+
+  // Password show/hide toggles
+  document.querySelectorAll('.input.with-icon .icon').forEach(function(icon){
+    if (icon.textContent.trim() === '👁') {
+      icon.style.cursor = 'pointer';
+      icon.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        icon.textContent = icon.textContent === '👁' ? '🙈' : '👁';
+      });
+    }
+  });
+
+  // OTP auto-advance
+  var otpBoxes = document.querySelectorAll('.otp-row .otp-box');
+  otpBoxes.forEach(function(box, i){
+    box.setAttribute('contenteditable', 'true');
+    box.addEventListener('input', function(){
+      var val = box.textContent.replace(/[^0-9]/g,'').slice(0,1);
+      box.textContent = val;
+      if (val && otpBoxes[i+1]) otpBoxes[i+1].focus();
+    });
+    box.addEventListener('keydown', function(ev){ if(ev.key.length===1 && !/[0-9]/.test(ev.key)) ev.preventDefault(); });
+  });
+
+  // Chip toggles (golf interest tags, tip amount selector)
+  document.querySelectorAll('.chip-group .chip').forEach(function(chip){
+    chip.addEventListener('click', function(){
+      var group = chip.closest('.chip-group');
+      // Tip selector behaves like single-select; interest tags behave multi-select.
+      var isTipSelector = /🏌/.test(chip.textContent) || chip.textContent.trim() === 'Custom';
+      if (isTipSelector) {
+        group.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
+        chip.classList.add('on');
+      } else {
+        chip.classList.toggle('on');
+      }
+    });
+  });
+
+  // Tabs
+  document.querySelectorAll('.tabs').forEach(function(tabs){
+    tabs.querySelectorAll('span').forEach(function(tab){
+      tab.style.cursor = 'pointer';
+      tab.addEventListener('click', function(){
+        tabs.querySelectorAll('span').forEach(function(t){ t.classList.remove('active'); });
+        tab.classList.add('active');
+      });
+    });
+  });
+
+  // Toggle switches
+  document.querySelectorAll('.toggle-row .toggle').forEach(function(tg){
+    tg.style.cursor = 'pointer';
+    tg.addEventListener('click', function(ev){
+      ev.stopPropagation();
+      tg.classList.toggle('off');
+    });
+  });
+
+  // Checkbox-gated primary CTA on Sign Up (both T&C + Privacy Policy must be checked)
+  document.querySelectorAll('.chk-row input[type=checkbox]').forEach(function(cb){
+    cb.addEventListener('click', function(ev){ ev.stopPropagation(); });
+  });
+
+  // Role card selection (Become a Creator style patterns, reused elsewhere if present)
+  document.querySelectorAll('.role-card').forEach(function(card){
+    card.addEventListener('click', function(e){
+      if (e.target.closest('[data-goto]') && e.target.tagName === 'BUTTON') return;
+      card.parentElement.querySelectorAll('.role-card').forEach(function(c){ c.classList.remove('selected'); });
+      card.classList.add('selected');
+    });
+  });
+
+  // Conversation list selection in Messages screen
+  document.querySelectorAll('.chat-list .conv').forEach(function(conv){
+    conv.style.cursor = 'pointer';
+    conv.addEventListener('click', function(){
+      conv.parentElement.querySelectorAll('.conv').forEach(function(c){ c.classList.remove('active'); });
+      conv.classList.add('active');
+    });
+  });
+
+  // Build screens menu list (already server-rendered); wire nothing extra needed (delegation covers clicks)
+
+  // Start — support deep-linking via URL hash (e.g. file.html#p6) for cross-prototype navigation
+  var hashId = (location.hash || '').replace('#','');
+  if (hashId && screenIds.indexOf(hashId) !== -1) {
+    show(hashId, false);
+  } else {
+    show('c1', false);
+  }
+  window.addEventListener('hashchange', function(){
+    var h = (location.hash || '').replace('#','');
+    if (h && screenIds.indexOf(h) !== -1) show(h);
+  });
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Farango — Clickable Prototypes</title>
+<style>
+  :root{ --ink:#182b1c; --panel-dark:#132018; --gold:#b8894f; --gold-light:#d9b073; --border:#ddd6c4; --muted:#7c7565; --bg:#f7f4ea; }
+  *{box-sizing:border-box;}
+  body{ margin:0; font-family:'Segoe UI',Helvetica,Arial,sans-serif; background:var(--bg); color:var(--ink); }
+  header{ background:linear-gradient(120deg, #0d150f, #16241a 55%, #1f3d27); color:#fff; padding:48px 6vw 44px; border-bottom:1px solid rgba(184,137,79,.4); }
+  header .eyebrow{ text-transform:uppercase; letter-spacing:.12em; font-size:12px; color:var(--gold-light); margin-bottom:10px; font-weight:700; }
+  header .brandrow{ display:flex; align-items:center; gap:16px; margin-bottom:14px; }
+  header .brandrow img{ height:56px; width:auto; border-radius:10px; box-shadow:0 6px 20px rgba(0,0,0,.4); }
+  header h1{ margin:0; font-size:32px; }
+  header p{ margin:0; color:#d8d3c4; font-size:14.5px; max-width:720px; line-height:1.55; }
+  main{ padding:44px 6vw 60px; max-width:1100px; margin:0 auto; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(240px,1fr)); gap:20px; margin-bottom:40px; }
+  a.card{ display:block; background:#fff; border:1px solid var(--border); border-radius:12px; padding:24px; text-decoration:none; color:var(--ink); transition:box-shadow .15s ease, transform .15s ease, border-color .15s ease; box-shadow:0 6px 20px rgba(19,32,24,.06); }
+  a.card:hover{ box-shadow:0 10px 30px rgba(19,32,24,.14); transform:translateY(-3px); border-color:var(--gold); }
+  a.card .num{ font-size:11px; font-weight:800; letter-spacing:.08em; color:var(--gold); text-transform:uppercase; margin-bottom:10px; }
+  a.card h2{ margin:0 0 8px; font-size:19px; }
+  a.card p{ margin:0 0 14px; font-size:12.5px; color:var(--muted); line-height:1.5; }
+  a.card .meta{ font-size:11.5px; color:var(--ink); font-weight:700; }
+  a.card .arrow{ float:right; opacity:.4; }
+  .divider{ border-top:1px solid var(--border); margin:36px 0; }
+  .secondary{ display:flex; gap:16px; flex-wrap:wrap; }
+  .secondary a{ font-size:13px; color:var(--ink); background:#fff; border:1px solid var(--border); border-radius:9px; padding:12px 16px; text-decoration:none; flex:1; min-width:220px; }
+  .secondary a:hover{ background:#fbf8ef; border-color:var(--gold); }
+  .secondary a b{ display:block; margin-bottom:3px; }
+  .secondary a span{ font-size:11.5px; color:var(--muted); }
+  footer{ padding:30px 6vw 50px; color:var(--muted); font-size:12px; text-align:center; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Farango · Discovery Doc V2.4 → Clickable Prototypes</div>
+  <div class="brandrow"><img src="assets/farango-logo.svg" alt="Farango"><h1>All Role Prototypes</h1></div>
+  <p>Pick a role below to open its fully clickable prototype. Every screen navigates for real — sidebar, buttons, cards and feed all route to the right place — with a collapsible spec drawer under each screen for exact field/behaviour detail sourced from the discovery document.</p>
+</header>
+
+<main>
+  <div class="grid" style="grid-template-columns:1fr; margin-bottom:16px;">
+    <a class="card" href="00-Website/website.html" style="display:flex; align-items:center; gap:20px; padding:22px 28px;">
+      <img src="assets/farango-logo.svg" alt="Farango" style="height:56px; width:auto; border-radius:10px; flex:none;">
+      <div>
+        <div class="num" style="margin-bottom:4px;">Start Here</div>
+        <h2 style="margin:0 0 4px;">Public Website <span class="arrow">→</span></h2>
+        <p style="margin:0;">Home, Explore Creators, Creator Profile, Community, How It Works, About, Contact — fully linked into Login/Register on the Player prototype.</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="grid">
+    <a class="card" href="01-Player/player-prototype.html">
+      <div class="num">Role 1 of 4</div>
+      <h2>Player <span class="arrow">→</span></h2>
+      <p>Sign up, onboarding, Instagram-style social feed, explore creators, subscriptions, Golf Ball wallet, marketplace, livestream, messages, profile.</p>
+      <div class="meta">36 screens</div>
+    </a>
+    <a class="card" href="02-Creator/creator-prototype.html">
+      <div class="num">Role 2 of 4</div>
+      <h2>Creator <span class="arrow">→</span></h2>
+      <p>Coach / Caddy / Pro-Expert application, studio dashboard, content, subscribers, subscription plan, earnings, livestream management, products.</p>
+      <div class="meta">26 screens</div>
+    </a>
+    <a class="card" href="03-Brand/brand-prototype.html">
+      <div class="num">Role 3 of 4</div>
+      <h2>Brand <span class="arrow">→</span></h2>
+      <p>Registration, dashboard, product management, order management &amp; shipping, wallet/payouts, dispute management, notifications.</p>
+      <div class="meta">16 screens</div>
+    </a>
+    <a class="card" href="04-Admin/admin-prototype.html">
+      <div class="num">Role 4 of 4</div>
+      <h2>Admin <span class="arrow">→</span></h2>
+      <p>Login, platform dashboard, user management, creator/brand verification, content moderation, Golf Ball economy, revenue &amp; payouts.</p>
+      <div class="meta">19 screens</div>
+    </a>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="secondary">
+    <a href="01-Player/index.html"><b>Player — Annotated Spec Doc</b><span>Printable, side-by-side field &amp; behaviour reference (non-clickable)</span></a>
+    <a href="OPEN-QUESTIONS.md"><b>Open Questions</b><span>Gaps &amp; decisions to confirm with the client before build</span></a>
+  </div>
+</main>
+
+<footer>Farango Phase-1 discovery scope (V2.4, 22 Jul 2026) · Draft v1 — for internal review before client walkthrough</footer>
+
+</body>
+</html>
